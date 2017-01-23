@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-MAINTAINER TuRzAm
+MAINTAINER sixarm
 # Size of the map
 # 1: small
 # 2: normal
@@ -15,7 +15,7 @@ ENV TERRARIA_PLAYERS_MAX 10
 
 # Add mono repository
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF && \
-echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
+echo "deb http://download.mono-project.com/repo/debian wheezy main" | tee /etc/apt/sources.list.d/mono-xamarin.list
 
 # Update and install mono and a zip utility
 RUN apt-get update && apt-get install -y \
@@ -30,7 +30,7 @@ RUN adduser \
 	--gecos "" \
 	terraria
 
-RUN mkdir /tshock /terraria && chown terraria /tshock /terraria
+RUN mkdir /tshock && chown terraria /tshock
 
 # Download the latest version of TShock
 #ADD https://api.github.com/repos/NyxStudios/TShock/zipball/ /tmp/tshock.zip
@@ -41,16 +41,16 @@ RUN unzip -d /tshock /tmp/tshock.zip
 RUN cp -r /tshock/ServerPlugins /tshock/DefaultServerPlugins 
 
 
-
+RUN mkdir /config  && chown terraria /config
 # Add bash file
 ADD terraria.sh /etc/terraria.sh
 
 
-RUN chown -R terraria /tshock /terraria /etc/terraria.sh
-RUN chmod 755 -R /tshock /terraria /etc/terraria.sh
+RUN chown -R terraria /tshock /config /etc/terraria.sh
+RUN chmod 755 -R /tshock /config /etc/terraria.sh
 
 # Allow for external data
-VOLUME /terraria
+VOLUME /config
 VOLUME /tshock/ServerPlugins
 
 # 7777 : Game port
